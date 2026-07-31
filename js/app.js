@@ -136,7 +136,17 @@ function renderResult(run,history=false,xpAward=null){
   e.resultTitle.textContent=history?"Løpsdetaljer":run.gameType==="training"?"Treningsøkt ferdig":run.completed?"Modus fullført!":"Løpet ble ikke fullført";
   e.resultText.textContent=run.gameType==="training"?"Treningsresultat uten medalje.":run.completed?"Fullført løp.":"Mislykket løp.";
   e.resultScore.textContent=`${run.score} / ${run.total}`;
-  e.resultBadge.textContent=run.gameType==="training"?"Trening":run.completed?(run.medal&&run.medal!=="Ingen"?`🏅 ${run.medal}`:"Ingen medalje"):`${run.wrong} feilforsøk`;
+  if(run.gameType==="training"){
+    e.resultBadge.className="resultBadge trainingResult";
+    e.resultBadge.innerHTML="<span>Trening</span>";
+  }else if(run.completed&&run.medal&&run.medal!=="Ingen"){
+    const medal=MEDALS.find(item=>item.name===run.medal);
+    e.resultBadge.className=`resultBadge medalResult ${medal?.cls||""}`;
+    e.resultBadge.innerHTML=`${medal?`<img src="${medal.icon}" alt="">`:""}<span>${escapeHtml(run.medal)}</span>`;
+  }else{
+    e.resultBadge.className="resultBadge";
+    e.resultBadge.innerHTML=`<span>${run.completed?"Ingen medalje":`${run.wrong} feilforsøk`}</span>`;
+  }
   const attempts=run.score+(run.wrong||0),accuracy=attempts?run.score/attempts*100:100,pace=run.time/1000/Math.max(1,run.score);
   e.resultStats.innerHTML=[
     ["Poeng",`${run.score} / ${run.total}`],["Tid",formatTime(run.time,true)],["Nøyaktighet",`${accuracy.toFixed(2)}%`],["Feilforsøk",run.wrong],
@@ -150,7 +160,11 @@ function renderResult(run,history=false,xpAward=null){
   e.reviewGrid.innerHTML="";const f=document.createDocumentFragment();
   for(let i=0;i<run.total;i++){const c=document.createElement("div");c.className=`reviewCell ${i<run.score?"correct":"untried"}`;c.textContent=PI_DIGITS[i];f.appendChild(c)}e.reviewGrid.appendChild(f);
   e.paceHeader.textContent=`Måltid for ${run.total}`;
-  e.paceRows.innerHTML=run.gameType==="training"?'<tr><td colspan="3">Treningsmodus gir ingen medaljer.</td></tr>':MEDALS.map(m=>`<tr><td class="${m.cls}"><strong>${m.emoji} ${m.name}</strong></td><td>≤ ${m.pace.toFixed(1)} sek/siffer</td><td>≤ ${formatTime(m.pace*run.total*1000,true)}</td></tr>`).join("");
+  e.paceRows.innerHTML=run.gameType==="training"?'<tr><td colspan="3">Treningsmodus gir ingen medaljer.</td></tr>':MEDALS.map(m=>`<tr class="medalPaceRow ${m.cls}">
+      <td><span class="medalName"><img src="${m.icon}" alt=""><strong>${m.name}</strong></span></td>
+      <td><span class="comparisonSign">≤</span><span class="comparisonValue">${m.pace.toFixed(1)} sek/siffer</span></td>
+      <td><span class="comparisonSign">≤</span><span class="comparisonValue">${formatTime(m.pace*run.total*1000,true)}</span></td>
+    </tr>`).join("");
   renderXpResult(history?null:xpAward);e.playAgain.style.display=history?"none":"";e.resultOverlay.classList.add("show");
 }
 function openFullProfile(){

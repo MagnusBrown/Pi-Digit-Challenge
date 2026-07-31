@@ -25,17 +25,36 @@
         <span class="headerXpTrack"><span id="headerXpBar"></span></span>
       </button>
 
-      <select id="mode" aria-label="Spillmodus">
-        <option value="20">20 desimaler</option><option value="50">50 desimaler</option><option value="100">100 desimaler</option>
-        <option value="200">200 desimaler</option>
-        <option value="400">400 desimaler</option>
-        <option value="750">750 desimaler</option>
-        <option value="1000">1 000 desimaler</option>
-      </select>
+      <div class="controlGroup">
+        <span class="controlLabel">Modus</span>
+        <select id="mode" aria-label="Spillmodus">
+          <option value="20">20 desimaler</option>
+          <option value="50">50 desimaler</option>
+          <option value="100">100 desimaler</option>
+          <option value="200">200 desimaler</option>
+          <option value="400">400 desimaler</option>
+          <option value="750">750 desimaler</option>
+          <option value="1000">1 000 desimaler</option>
+        </select>
+      </div>
 
-      <select id="gameType" aria-label="Spilltype"><option value="competition">Konkurranse</option><option value="training">Trening</option></select><label class="toggle"><input id="soundToggle" type="checkbox" checked> Lyd</label>
-      <button id="startBtn" class="primary" type="button">Start</button>
-      <button id="resetBtn" class="secondary" type="button">Nullstill</button>
+      <div class="controlGroup">
+        <span class="controlLabel">Spilltype</span>
+        <select id="gameType" aria-label="Spilltype">
+          <option value="competition">Konkurranse</option>
+          <option value="training">Trening</option>
+        </select>
+      </div>
+
+      <label class="toggle soundControl">
+        <span class="controlLabel">Lyd</span>
+        <span class="soundToggleLine"><input id="soundToggle" type="checkbox" checked> På</span>
+      </label>
+
+      <div class="headerButtons">
+        <button id="startBtn" class="primary" type="button">Start</button>
+        <button id="resetBtn" class="secondary" type="button">Nullstill</button>
+      </div>
     </div>
   </header>
 
@@ -152,7 +171,7 @@
   <div class="modal card">
     <div class="modalTop">
       <div>
-        <div id="resultEmoji" class="resultEmoji">🏆</div>
+        <div id="resultEmoji" class="resultEmoji" aria-hidden="true"></div>
         <h2 id="resultTitle">Resultat</h2>
         <p id="resultText"></p>
       </div>

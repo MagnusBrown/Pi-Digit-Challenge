@@ -1,0 +1,12 @@
+Pi Digit Challenge – visual update patch
+
+Replace these files in the repository:
+- index.html
+- css/style.css
+- js/config.js
+- js/app.js
+
+Add this folder:
+- assets/medals/
+
+No game logic, XP balancing, achievements, storage, training rules or leaderboard behavior has been changed.
