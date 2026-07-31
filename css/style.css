@@ -813,3 +813,93 @@ button:active{transform:translateY(0) scale(.985)}
   .achievementCard{min-height:188px;grid-template-rows:112px auto auto;padding:12px 8px}
   .achievementBadge{width:108px;height:108px}
 }
+
+
+/* =========================================================
+   Header and life-card alignment refinements
+   ========================================================= */
+
+/* Keep all five lives on one balanced row. */
+.stat .lives{
+  display:block;
+  white-space:nowrap;
+  overflow:visible;
+  font-size:clamp(1.55rem,2.15vw,2rem);
+  line-height:1;
+  letter-spacing:.16em;
+  word-spacing:.08em;
+}
+
+/* Prevent the title from pushing into the player/control area. */
+.brand{
+  min-width:0;
+  flex:0 1 auto;
+}
+
+.brand h1{
+  max-width:100%;
+  white-space:nowrap;
+  font-size:clamp(1.75rem,2.55vw,3rem);
+  line-height:.96;
+  letter-spacing:-.055em;
+}
+
+@media (min-width:1181px){
+  .header{
+    display:grid;
+    grid-template-columns:minmax(270px,340px) minmax(0,1fr);
+    align-items:center;
+    column-gap:24px;
+  }
+
+  .headerActions{
+    min-width:0;
+    max-width:none;
+    grid-template-columns:
+      minmax(120px,150px)
+      minmax(108px,128px)
+      minmax(150px,190px)
+      minmax(140px,180px)
+      minmax(82px,100px)
+      minmax(100px,116px)
+      54px;
+  }
+}
+
+@media (max-width:1180px){
+  .header{
+    display:grid;
+    grid-template-columns:1fr;
+    align-items:stretch;
+  }
+
+  .brand{
+    width:100%;
+  }
+
+  .brand h1{
+    font-size:clamp(1.7rem,5vw,2.65rem);
+  }
+
+  .headerActions{
+    max-width:none;
+  }
+}
+
+@media (max-width:560px){
+  .brand{
+    padding-right:70px;
+  }
+
+  .brand h1{
+    white-space:normal;
+    font-size:clamp(1.55rem,9vw,2.15rem);
+    line-height:.95;
+  }
+
+  .stat .lives{
+    font-size:1.45rem;
+    letter-spacing:.1em;
+    word-spacing:.03em;
+  }
+}
