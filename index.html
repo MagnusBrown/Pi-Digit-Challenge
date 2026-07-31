@@ -17,13 +17,14 @@
     </div>
 
     <div class="headerActions">
-      <button id="profileBtn" class="playerButton" type="button">
-        Spiller: <span id="playerLabel">kobler til …</span>
+      <button id="profileBtn" class="playerButton" type="button" aria-label="Rediger spillernavn">
+        <span class="playerButtonLabel">Spiller</span>
+        <strong id="playerLabel">kobler til …</strong>
       </button>
-      <button id="levelBtn" class="levelButton" type="button" aria-label="Åpne profil og nivå">
+      <div id="levelDisplay" class="levelButton" aria-label="Nivåstatus">
         <span id="headerLevel">Nivå 1</span>
         <span class="headerXpTrack"><span id="headerXpBar"></span></span>
-      </button>
+      </div>
 
       <div class="controlGroup">
         <span class="controlLabel">Modus</span>
@@ -55,6 +56,11 @@
         <button id="startBtn" class="primary" type="button">Start</button>
         <button id="resetBtn" class="secondary" type="button">Nullstill</button>
       </div>
+
+      <button id="profileAvatarBtn" class="profileAvatarButton" type="button" aria-label="Åpne min profil" title="Min profil">
+        <span id="profileAvatarInitial">M</span>
+        <span class="profileOnlineDot" aria-hidden="true"></span>
+      </button>
     </div>
   </header>
 

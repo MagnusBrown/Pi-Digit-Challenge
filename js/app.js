@@ -21,7 +21,7 @@ const e = {
   reviewGrid:$("reviewGrid"),paceRows:$("paceRows"),paceHeader:$("paceModeHeader"),
   closeResult:$("closeResultBtn"),closeResult2:$("closeResultBtn2"),playAgain:$("playAgainBtn"),
   toast:$("toast"),trainingReveal:$("trainingReveal"),trainingRevealDigits:$("trainingRevealDigits"),
-  showBlockBtn:$("showBlockBtn"),levelBtn:$("levelBtn"),headerLevel:$("headerLevel"),
+  showBlockBtn:$("showBlockBtn"),profileAvatarBtn:$("profileAvatarBtn"),profileAvatarInitial:$("profileAvatarInitial"),headerLevel:$("headerLevel"),
   headerXpBar:$("headerXpBar"),profileLevel:$("profileLevel"),profileTotalXp:$("profileTotalXp"),
   profileXpBar:$("profileXpBar"),profileXpProgress:$("profileXpProgress"),
   profileXpRemaining:$("profileXpRemaining"),xpResult:$("xpResult"),xpGained:$("xpGained"),
@@ -202,7 +202,7 @@ const game=new PiGame(e,{
 e.status.textContent="Lokal lagring";e.status.className="status online";
 e.input.oninput=()=>game.submit(e.input.value.slice(-1));e.start.onclick=()=>game.start();e.reset.onclick=()=>game.reset();
 e.mode.onchange=async()=>{game.reset();await leaderboard.load()};e.gameType.onchange=async()=>{game.reset();await leaderboard.load()};
-e.showBlockBtn.onclick=()=>game.showTrainingBlock(true);e.levelBtn.onclick=openFullProfile;e.profileBtn.onclick=()=>openName(false);e.editProfile.onclick=openFullProfile;
+e.showBlockBtn.onclick=()=>game.showTrainingBlock(true);e.profileAvatarBtn.onclick=openFullProfile;e.profileBtn.onclick=()=>openName(false);e.editProfile.onclick=openFullProfile;
 e.closeProfile.onclick=closeName;e.saveProfile.onclick=saveName;e.username.onkeydown=x=>{if(x.key==="Enter")saveName()};
 document.querySelectorAll(".boardTab").forEach(b=>b.onclick=async()=>{leaderboard.type=b.dataset.board;await leaderboard.load()});
 let timer;e.search.oninput=()=>{clearTimeout(timer);timer=setTimeout(()=>leaderboard.load(),300)};e.refresh.onclick=()=>leaderboard.load();
