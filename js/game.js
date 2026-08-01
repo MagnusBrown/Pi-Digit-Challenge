@@ -47,8 +47,8 @@ export class PiGame {
     this.elements.trainingReveal.classList.remove("show");
     document.body.classList.toggle("trainingMode", this.state.gameType === "training");
     this.elements.hint.textContent = this.state.gameType === "training"
-      ? "Treningsmodus: ingen liv eller medaljer."
-      : "Tidtakeren starter når du trykker Start.";
+      ? "Training mode has no lives or medals."
+      : "The timer begins with your first digit.";
     this.buildGrid();
     this.update();
   }
@@ -60,21 +60,25 @@ export class PiGame {
     }
     this.reset();
     this.state.running = true;
-    this.state.runStartedAt = new Date().toISOString();
     this.elements.input.disabled = false;
     this.elements.mode.disabled = true;
     this.elements.gameType.disabled = true;
     this.elements.start.disabled = true;
     this.elements.hint.textContent = this.state.gameType === "training"
-      ? "Øv fritt. Ved feil vises tiergruppen i tre sekunder."
-      : "Skriv neste siffer. Et feil svar koster ett liv.";
-    this.startTimer();
+      ? "Practice freely. After a mistake, the current 10-digit block appears briefly."
+      : "Enter the next digit. Each mistake costs one life.";
     this.update();
     this.elements.input.focus();
   }
 
   submit(value) {
     if (!this.state.running || !/^[0-9]$/.test(value) || this.elements.input.disabled) return;
+
+    // Start timing only when the player enters the first valid digit.
+    if (!this.state.timer) {
+      this.state.runStartedAt = new Date().toISOString();
+      this.startTimer();
+    }
 
     if (value === PI_DIGITS[this.state.index]) {
       const now = performance.now();
@@ -89,7 +93,7 @@ export class PiGame {
       this.state.streak += 1;
       this.state.longest = Math.max(this.state.longest, this.state.streak);
       this.flash("correctFlash");
-      this.elements.hint.textContent = "Riktig!";
+      this.elements.hint.textContent = "Correct!";
       this.beep(520, 0.06);
 
       if (this.state.index >= this.state.total) {
@@ -108,7 +112,7 @@ export class PiGame {
       }
 
       this.state.lives -= 1;
-      this.elements.hint.textContent = `Feil siffer. ${this.state.lives} liv igjen.`;
+      this.elements.hint.textContent = `Incorrect digit. ${this.state.lives} ${this.state.lives === 1 ? "life" : "lives"} remaining.`;
       if (this.state.lives <= 0) {
         this.finish(false);
         return;
@@ -133,15 +137,15 @@ export class PiGame {
     this.elements.trainingReveal.classList.add("show");
     this.elements.input.disabled = true;
     this.elements.hint.textContent = manual
-      ? "Tiergruppen vises i tre sekunder."
-      : "Se tiergruppen. Du fortsetter på samme siffer.";
+      ? "The current 10-digit block is shown for three seconds."
+      : "Review the block, then continue from the same digit.";
 
     clearTimeout(this.revealTimer);
     this.revealTimer = setTimeout(() => {
       this.elements.trainingReveal.classList.remove("show");
       this.elements.input.disabled = false;
       this.elements.input.value = "";
-      this.elements.hint.textContent = "Fortsett på samme siffer.";
+      this.elements.hint.textContent = "Continue from the same digit.";
       this.elements.input.focus();
     }, 3000);
     this.update();
@@ -162,7 +166,7 @@ export class PiGame {
       : 0;
     const pace = this.state.elapsed / 1000 / Math.max(1, this.state.total);
     const medal = this.state.gameType === "competition" && completed
-      ? pace <= 0.9 ? "Gull" : pace <= 1.5 ? "Sølv" : pace <= 2.3 ? "Bronse" : "Ingen"
+      ? pace <= 0.9 ? "Gold" : pace <= 1.5 ? "Silver" : pace <= 2.3 ? "Bronze" : "None"
       : null;
 
     const run = {
@@ -242,11 +246,11 @@ export class PiGame {
   update() {
     const attempts = this.state.index + this.state.wrong;
     const training = this.state.gameType === "training";
-    this.elements.modeLine.textContent = `${training ? "Trening" : "Konkurranse"} · ${this.state.total.toLocaleString("no-NO")} desimaler`;
+    this.elements.modeLine.textContent = `${training ? "Training" : "Competition"} · ${this.state.total.toLocaleString("en-US")} digits`;
     this.elements.position.textContent = this.state.running
-      ? `Posisjon ${this.state.index + 1} av ${this.state.total}`
-      : this.state.finished ? `${this.state.index} av ${this.state.total} riktige` : "Trykk Start for å begynne";
-    this.elements.lives.textContent = training ? "Ingen liv" : ("♥ ".repeat(this.state.lives).trim() || "0");
+      ? `Digit ${this.state.index + 1} of ${this.state.total}`
+      : this.state.finished ? `${this.state.index} of ${this.state.total} correct` : "Press Start when you are ready";
+    this.elements.lives.textContent = training ? "Unlimited" : ("♥ ".repeat(this.state.lives).trim() || "0");
     this.elements.timer.textContent = formatTime(this.state.elapsed);
     this.elements.progressText.textContent = `${this.state.index} / ${this.state.total}`;
     this.elements.accuracy.textContent = `${(attempts ? this.state.index / attempts * 100 : 100).toFixed(1)}%`;

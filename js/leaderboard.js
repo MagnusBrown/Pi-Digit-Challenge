@@ -1,6 +1,10 @@
 import { cleanUsername, escapeHtml, formatTime } from "./utils.js";
 import { getLocalRuns } from "./storage.js";
 
+function medalLabel(value) {
+  return ({ Gull: "Gold", Sølv: "Silver", Bronse: "Bronze", Ingen: "None" }[value] || value || "None");
+}
+
 export class Leaderboard {
   constructor({ profile, elements, onRunSelect }) {
     this.profile = profile;
@@ -91,7 +95,7 @@ export class Leaderboard {
   render() {
     if (!this.rows.length) {
       this.elements.leaderboard.innerHTML =
-        '<p class="empty">Ingen resultater ennå.</p>';
+        '<p class="empty">No results yet.</p>';
       return;
     }
 
@@ -101,10 +105,10 @@ export class Leaderboard {
           <thead>
             <tr>
               <th>#</th>
-              <th>Spiller</th>
-              <th>Forsøk</th>
-              <th>Fullførte</th>
-              <th>Beste</th>
+              <th>Player</th>
+              <th>Runs</th>
+              <th>Completed</th>
+              <th>Best</th>
             </tr>
           </thead>
           <tbody>
@@ -131,9 +135,9 @@ export class Leaderboard {
         <thead>
           <tr>
             <th>#</th>
-            <th>Spiller</th>
-            <th>${this.type === "completed" ? "Tid" : "Poeng"}</th>
-            <th>${this.type === "completed" ? "Medalje" : "Tid"}</th>
+            <th>Player</th>
+            <th>${this.type === "completed" ? "Time" : "Score"}</th>
+            <th>${this.type === "completed" ? "Medal" : "Time"}</th>
           </tr>
         </thead>
         <tbody>
@@ -172,9 +176,9 @@ export class Leaderboard {
 
   medalLabel(run) {
     const pace = run.time / 1000 / run.total;
-    if (pace <= 0.9) return "🥇 Gull";
-    if (pace <= 1.5) return "🥈 Sølv";
-    if (pace <= 2.3) return "🥉 Bronse";
-    return "Ingen";
+    if (pace <= 0.9) return "Gold";
+    if (pace <= 1.5) return "Silver";
+    if (pace <= 2.3) return "Bronze";
+    return "None";
   }
 }

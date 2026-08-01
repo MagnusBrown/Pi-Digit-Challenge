@@ -79,9 +79,9 @@ export function calculateRunXp(run) {
 
   let medalMultiplier = 1;
   if (run.gameType === "competition" && run.completed) {
-    if (run.medal === "Gull") medalMultiplier = 1.20;
-    else if (run.medal === "Sølv") medalMultiplier = 1.10;
-    else if (run.medal === "Bronse") medalMultiplier = 1.05;
+    if (["Gold", "Gull"].includes(run.medal)) medalMultiplier = 1.20;
+    else if (["Silver", "Sølv"].includes(run.medal)) medalMultiplier = 1.10;
+    else if (["Bronze", "Bronse"].includes(run.medal)) medalMultiplier = 1.05;
   }
 
   const raw = (depthXp * typeMultiplier * accuracyMultiplier + completionBonus)

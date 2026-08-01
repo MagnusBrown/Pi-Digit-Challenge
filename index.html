@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="no">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#09101f">
-  <meta name="description" content="Test hvor mange desimaler av π du kan huske.">
+  <meta name="description" content="Test your memory, improve your recall, and master the digits of π.">
   <title>Pi Digit Challenge</title>
   <link rel="stylesheet" href="./css/style.css">
 </head>
@@ -17,47 +17,47 @@
     </div>
 
     <div class="headerActions">
-      <button id="profileBtn" class="playerButton" type="button" aria-label="Rediger spillernavn">
-        <span class="playerButtonLabel">Spiller</span>
-        <strong id="playerLabel">kobler til …</strong>
+      <button id="profileBtn" class="playerButton" type="button" aria-label="Edit player name">
+        <span class="playerButtonLabel">Player</span>
+        <strong id="playerLabel">loading…</strong>
       </button>
-      <div id="levelDisplay" class="levelButton" aria-label="Nivåstatus">
-        <span id="headerLevel">Nivå 1</span>
+      <div id="levelDisplay" class="levelButton" aria-label="Level progress">
+        <span id="headerLevel">Level 1</span>
         <span class="headerXpTrack"><span id="headerXpBar"></span></span>
       </div>
 
       <div class="controlGroup">
-        <span class="controlLabel">Modus</span>
-        <select id="mode" aria-label="Spillmodus">
-          <option value="20">20 desimaler</option>
-          <option value="50">50 desimaler</option>
-          <option value="100">100 desimaler</option>
-          <option value="200">200 desimaler</option>
-          <option value="400">400 desimaler</option>
-          <option value="750">750 desimaler</option>
-          <option value="1000">1 000 desimaler</option>
+        <span class="controlLabel">Mode</span>
+        <select id="mode" aria-label="Digit mode">
+          <option value="20">20 digits</option>
+          <option value="50">50 digits</option>
+          <option value="100">100 digits</option>
+          <option value="200">200 digits</option>
+          <option value="400">400 digits</option>
+          <option value="750">750 digits</option>
+          <option value="1000">1,000 digits</option>
         </select>
       </div>
 
       <div class="controlGroup">
-        <span class="controlLabel">Spilltype</span>
-        <select id="gameType" aria-label="Spilltype">
-          <option value="competition">Konkurranse</option>
-          <option value="training">Trening</option>
+        <span class="controlLabel">Game type</span>
+        <select id="gameType" aria-label="Game type">
+          <option value="competition">Competition</option>
+          <option value="training">Training</option>
         </select>
       </div>
 
       <label class="toggle soundControl">
-        <span class="controlLabel">Lyd</span>
-        <span class="soundToggleLine"><input id="soundToggle" type="checkbox" checked> På</span>
+        <span class="controlLabel">Sound</span>
+        <span class="soundToggleLine"><input id="soundToggle" type="checkbox" checked> On</span>
       </label>
 
       <div class="headerButtons">
         <button id="startBtn" class="primary" type="button">Start</button>
-        <button id="resetBtn" class="secondary" type="button">Nullstill</button>
+        <button id="resetBtn" class="secondary" type="button">Reset</button>
       </div>
 
-      <button id="profileAvatarBtn" class="profileAvatarButton" type="button" aria-label="Åpne min profil" title="Min profil">
+      <button id="profileAvatarBtn" class="profileAvatarButton" type="button" aria-label="Open my profile" title="My profile">
         <span id="profileAvatarInitial">M</span>
         <span class="profileOnlineDot" aria-hidden="true"></span>
       </button>
@@ -65,18 +65,18 @@
   </header>
 
   <section class="stats">
-    <div class="stat card"><div class="label">Liv</div><div id="lives" class="value lives">♥ ♥ ♥ ♥ ♥</div></div>
-    <div class="stat card"><div class="label">Tid</div><div id="timer" class="value">00:00.0</div></div>
-    <div class="stat card"><div class="label">Fremdrift</div><div id="progressText" class="value">0 / 100</div></div>
-    <div class="stat card"><div class="label">Nøyaktighet</div><div id="accuracy" class="value">100%</div></div>
-    <div class="stat card"><div class="label">Beste tid</div><div id="record" class="value record">—</div></div>
+    <div class="stat card"><div class="label">Lives</div><div id="lives" class="value lives">♥ ♥ ♥ ♥ ♥</div></div>
+    <div class="stat card"><div class="label">Time</div><div id="timer" class="value">00:00.0</div></div>
+    <div class="stat card"><div class="label">Progress</div><div id="progressText" class="value">0 / 100</div></div>
+    <div class="stat card"><div class="label">Accuracy</div><div id="accuracy" class="value">100%</div></div>
+    <div class="stat card"><div class="label">Best time</div><div id="record" class="value record">—</div></div>
   </section>
 
   <section class="game card">
     <div class="play">
-      <div id="modeLine" class="modeLine">Modus: 100 desimaler</div>
-      <div id="position" class="position">Trykk Start for å begynne</div>
-      <div class="sequenceLabel">Nylige π-desimaler – bare en del av sekvensen</div>
+      <div id="modeLine" class="modeLine">Modus: 100 digits</div>
+      <div id="position" class="position">Press Start when you are ready</div>
+      <div class="sequenceLabel">Recent digits of π</div>
 
       <div class="sequence">
         <span id="leadingEllipsis" class="ellipsis"></span>
@@ -84,11 +84,11 @@
         <span id="currentMarker" class="current">?</span>
       </div>
 
-      <label class="inputLabel" for="digitInput">Skriv neste siffer</label>
+      <label class="inputLabel" for="digitInput">Enter the next digit</label>
       <input id="digitInput" class="digitInput" inputmode="numeric" pattern="[0-9]*" maxlength="1"
-             autocomplete="off" disabled aria-label="Neste siffer">
+             autocomplete="off" disabled aria-label="Next digit">
 
-      <div id="hint" class="hint">Tidtakeren starter når du trykker Start.</div><div id="trainingReveal" class="trainingReveal"><div class="trainingRevealTitle">Tiergruppe</div><div id="trainingRevealDigits" class="trainingRevealDigits"></div></div><button id="showBlockBtn" class="secondary trainingOnly" type="button">Vis tiergruppe</button>
+      <div id="hint" class="hint">The timer begins with your first digit.</div><div id="trainingReveal" class="trainingReveal"><div id="trainingRevealDigits" class="trainingRevealDigits"></div></div><button id="showBlockBtn" class="secondary trainingOnly" type="button">Show current block</button>
       <div class="progressWrap"><div id="progressBar" class="progressBar"></div></div>
     </div>
 
@@ -96,8 +96,8 @@
       <section class="gridPanel">
         <div class="sectionHead">
           <div>
-            <h2>Din desimalsekvens</h2>
-            <p>Riktige sifre vises i grønt. Etter et mislykket løp vises bare de utypede sifrene i grått.</p>
+            <h2>Your digit sequence</h2>
+            <p>Correct digits stay highlighted. After an incomplete run, unattempted positions are shown for review.</p>
           </div>
         </div>
         <div id="grid" class="grid"></div>
@@ -106,30 +106,30 @@
       <aside class="sidePanel">
         <div class="panelBox">
           <div class="boardHeading">
-            <h3>Toppliste</h3>
-            <span id="onlineStatus" class="status">Kobler til …</span>
+            <h3>Leaderboard</h3>
+            <span id="onlineStatus" class="status">Loading…</span>
           </div>
 
           <div class="tabs">
-            <button class="tab boardTab active" data-board="failed" type="button">Beste poeng</button>
-            <button class="tab boardTab" data-board="completed" type="button">Fullførte</button>
-            <button class="tab boardTab" data-board="overall" type="button">Samlet</button>
+            <button class="tab boardTab active" data-board="failed" type="button">Best scores</button>
+            <button class="tab boardTab" data-board="completed" type="button">Completed</button>
+            <button class="tab boardTab" data-board="overall" type="button">Overall</button>
           </div>
 
           <div class="searchRow">
-            <input id="searchInput" class="searchInput" maxlength="18" placeholder="Søk etter spiller …">
-            <button id="refreshBtn" class="secondary" type="button" aria-label="Oppdater">↻</button>
+            <input id="searchInput" class="searchInput" maxlength="18" placeholder="Search players…">
+            <button id="refreshBtn" class="secondary" type="button" aria-label="Refresh">↻</button>
           </div>
 
-          <div id="leaderboard" class="boardWrap"><p class="empty">Laster …</p></div>
+          <div id="leaderboard" class="boardWrap"><p class="empty">Loading…</p></div>
         </div>
 
         <div class="panelBox">
           <div class="boardHeading">
-            <h3>Min profil</h3>
-            <button id="editProfileBtn" class="tab" type="button">Profil</button>
+            <h3>My profile</h3>
+            <button id="editProfileBtn" class="tab" type="button">Profile</button>
           </div>
-          <div id="profileStats" class="profileStats"><p class="empty">Ingen statistikk ennå.</p></div>
+          <div id="profileStats" class="profileStats"><p class="empty">No statistics yet.</p></div>
         </div>
       </aside>
     </div>
@@ -140,45 +140,45 @@
   <div class="modal small card">
     <div class="modalTop">
       <div>
-        <h2>Spillerprofil</h2>
-        <p>Navnet lagres bare i denne nettleseren.</p>
+        <h2>Player profile</h2>
+        <p>Your profile is stored locally in this browser.</p>
       </div>
       <button id="closeProfileBtn" class="iconButton" type="button">×</button>
     </div>
 
     <div class="formGroup">
-      <label for="usernameInput">Brukernavn</label>
+      <label for="usernameInput">Username</label>
       <input id="usernameInput" maxlength="18" autocomplete="nickname" placeholder="Magnus">
-      <div class="formHelp">3–18 tegn. Bokstaver, tall, mellomrom, bindestrek og understrek.</div>
+      <div class="formHelp">Use 3–18 characters: letters, numbers, spaces, hyphens, or underscores.</div>
     </div>
 
     <div id="profileError" class="formError"></div>
     <div class="modalActions">
-      <button id="saveProfileBtn" class="primary" type="button">Velg brukernavn</button>
+      <button id="saveProfileBtn" class="primary" type="button">Save username</button>
     </div>
   </div>
 </div>
 
-<div id="fullProfileOverlay" class="overlay"><div class="modal profileModal card"><div class="modalTop"><div><h2>Min profil</h2><p>Lokal profil og prestasjoner</p></div><button id="closeFullProfileBtn" class="iconButton">×</button></div><div class="profileHero"><div class="profileAvatar">π</div><div><h3 id="fullProfileName"></h3><p id="profileMemberSince"></p></div></div>
+<div id="fullProfileOverlay" class="overlay"><div class="modal profileModal card"><div class="modalTop"><div><h2>My profile</h2><p>Progress, records, and achievements stored on this device</p></div><button id="closeFullProfileBtn" class="iconButton">×</button></div><div class="profileHero"><div class="profileAvatar">π</div><div><h3 id="fullProfileName"></h3><p id="profileMemberSince"></p></div></div>
 <div class="levelPanel">
   <div class="levelTopLine">
     <div>
-      <span class="levelEyebrow">SPILLERNIVÅ</span>
-      <strong id="profileLevel">Nivå 1</strong>
+      <span class="levelEyebrow">PLAYER LEVEL</span>
+      <strong id="profileLevel">Level 1</strong>
     </div>
-    <span id="profileTotalXp">0 XP totalt</span>
+    <span id="profileTotalXp">0 total XP</span>
   </div>
   <div class="levelTrack"><div id="profileXpBar" class="levelFill"></div></div>
   <div class="levelBottomLine">
     <span id="profileXpProgress">0 / 170 XP</span>
-    <span id="profileXpRemaining">170 XP til nivå 2</span>
+    <span id="profileXpRemaining">170 XP to Level 2</span>
   </div>
-</div><div id="fullProfileStats" class="profileStats expandedStats"></div><h3>Beste resultater per modus</h3><div id="bestByMode" class="bestByMode"></div><h3>Achievements <span id="achievementCount"></span></h3><div id="achievementFilters" class="achievementFilters"></div><div id="achievementGrid" class="achievementGrid"></div><h3>Nylige løp</h3><div id="recentRuns" class="recentRuns"></div><div class="profileDataActions"><button id="exportDataBtn" class="secondary">Eksporter data</button><label class="secondary importButton">Importer data<input id="importDataInput" type="file" accept="application/json" hidden></label><button id="deleteDataBtn" class="danger">Slett all data</button></div></div></div><div id="achievementOverlay" class="overlay"><div class="modal small card"><div class="modalTop"><h2 id="achievementTitle"></h2><button id="closeAchievementBtn" class="iconButton">×</button></div><img id="achievementImage" class="achievementLargeImage"><div id="achievementRarity" class="achievementRarity"></div><p id="achievementDescription"></p><div id="achievementStatus" class="achievementStatus"></div><div id="achievementUnlockInfo" class="achievementUnlockInfo"></div></div></div><div id="resultOverlay" class="overlay">
+</div><div id="fullProfileStats" class="profileStats expandedStats"></div><h3>Best results by mode</h3><div id="bestByMode" class="bestByMode"></div><h3>Achievements <span id="achievementCount"></span></h3><div id="achievementFilters" class="achievementFilters"></div><div id="achievementGrid" class="achievementGrid"></div><h3>Recent runs</h3><div id="recentRuns" class="recentRuns"></div><div class="profileDataActions"><button id="exportDataBtn" class="secondary">Export data</button><label class="secondary importButton">Import data<input id="importDataInput" type="file" accept="application/json" hidden></label><button id="deleteDataBtn" class="danger">Delete all data</button></div></div></div><div id="achievementOverlay" class="overlay"><div class="modal small card"><div class="modalTop"><h2 id="achievementTitle"></h2><button id="closeAchievementBtn" class="iconButton">×</button></div><img id="achievementImage" class="achievementLargeImage"><div id="achievementRarity" class="achievementRarity"></div><p id="achievementDescription"></p><div id="achievementStatus" class="achievementStatus"></div><div id="achievementUnlockInfo" class="achievementUnlockInfo"></div></div></div><div id="resultOverlay" class="overlay">
   <div class="modal card">
     <div class="modalTop">
       <div>
         <div id="resultEmoji" class="resultEmoji" aria-hidden="true"></div>
-        <h2 id="resultTitle">Resultat</h2>
+        <h2 id="resultTitle">Result</h2>
         <p id="resultText"></p>
       </div>
       <button id="closeResultBtn" class="iconButton" type="button">×</button>
@@ -193,26 +193,26 @@
     </div>
 
     <div class="resultsGrid">
-      <div class="resultsPanel"><h3>Løpsstatistikk</h3><div id="resultStats"></div></div>
-      <div class="resultsPanel"><h3>Toppliste</h3><div id="resultBoardInfo"></div></div>
+      <div class="resultsPanel"><h3>Run statistics</h3><div id="resultStats"></div></div>
+      <div class="resultsPanel"><h3>Leaderboard</h3><div id="resultBoardInfo"></div></div>
     </div>
 
     <div class="reviewBlock">
-      <h3>Hele desimalsekvensen</h3>
+      <h3>Full digit review</h3>
       <div id="reviewGrid" class="reviewGrid"></div>
     </div>
 
     <div class="paceGuide">
-      <h3>Guide for medaljetempo</h3>
+      <h3>Medal pace guide</h3>
       <table class="paceTable">
-        <thead><tr><th>Medalje</th><th>Tempo</th><th id="paceModeHeader">Måltid</th></tr></thead>
+        <thead><tr><th>Medal</th><th>Pace</th><th id="paceModeHeader">Target time</th></tr></thead>
         <tbody id="paceRows"></tbody>
       </table>
     </div>
 
     <div class="modalActions">
-      <button id="playAgainBtn" class="primary" type="button">Prøv igjen</button>
-      <button id="closeResultBtn2" class="secondary" type="button">Lukk</button>
+      <button id="playAgainBtn" class="primary" type="button">Play again</button>
+      <button id="closeResultBtn2" class="secondary" type="button">Close</button>
     </div>
   </div>
 </div>
