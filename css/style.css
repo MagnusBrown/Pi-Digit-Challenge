@@ -813,3 +813,108 @@ button:active{transform:translateY(0) scale(.985)}
   .achievementCard{min-height:188px;grid-template-rows:112px auto auto;padding:12px 8px}
   .achievementBadge{width:108px;height:108px}
 }
+
+
+/* =========================================================
+   FINAL HEADER AND LIVES LAYOUT FIX
+   ========================================================= */
+
+/* Keep all five life icons together on a single line. */
+#lives{
+  display:flex;
+  align-items:center;
+  flex-wrap:nowrap;
+  white-space:nowrap;
+  gap:clamp(10px,1.15vw,20px);
+  width:100%;
+  min-width:0;
+  letter-spacing:0;
+  word-spacing:0;
+  font-size:clamp(1.65rem,2vw,2rem);
+  line-height:1;
+}
+
+#lives::first-letter{
+  margin-left:0;
+}
+
+/* Give the title and control area separate, predictable space. */
+@media (min-width:1181px){
+  .header{
+    display:grid;
+    grid-template-columns:minmax(320px,390px) minmax(0,1fr);
+    align-items:center;
+    gap:22px;
+  }
+
+  .brand{
+    min-width:0;
+    width:100%;
+    gap:14px;
+  }
+
+  .brand .logo{
+    flex:0 0 auto;
+  }
+
+  .brand h1{
+    min-width:0;
+    max-width:100%;
+    white-space:nowrap;
+    overflow:visible;
+    font-size:clamp(2rem,2.45vw,2.75rem);
+    line-height:.94;
+    letter-spacing:-.055em;
+  }
+
+  .headerActions{
+    min-width:0;
+    width:100%;
+    max-width:none;
+    grid-template-columns:
+      minmax(118px,145px)
+      minmax(108px,132px)
+      minmax(142px,180px)
+      minmax(138px,176px)
+      minmax(78px,96px)
+      minmax(96px,112px)
+      54px;
+  }
+}
+
+/* Stack cleanly before the title and controls can collide. */
+@media (max-width:1180px){
+  .header{
+    display:grid;
+    grid-template-columns:1fr;
+    align-items:stretch;
+    gap:16px;
+  }
+
+  .brand{
+    min-width:0;
+    width:100%;
+  }
+
+  .brand h1{
+    white-space:nowrap;
+    font-size:clamp(2rem,5vw,3rem);
+  }
+
+  .headerActions{
+    width:100%;
+    max-width:none;
+  }
+}
+
+@media (max-width:620px){
+  .brand h1{
+    white-space:normal;
+    font-size:clamp(1.7rem,9vw,2.35rem);
+  }
+
+  #lives{
+    gap:9px;
+    font-size:1.55rem;
+  }
+}
