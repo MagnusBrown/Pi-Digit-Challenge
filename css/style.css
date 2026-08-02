@@ -1387,3 +1387,264 @@ body{
     grid-template-columns:1fr!important;
   }
 }
+
+
+/* =========================================================
+   CUSTOM RANGE AND RESULT MODAL REFINEMENT
+   ========================================================= */
+
+/* Custom-range inputs must always have enough room for both values. */
+.customRangeGroup,
+.customRangeInputs,
+.customRangeInputs input{
+  min-width:0!important;
+}
+
+.customRangeInputs{
+  display:grid!important;
+  grid-template-columns:minmax(88px,1fr) auto minmax(88px,1fr)!important;
+  align-items:center!important;
+  gap:9px!important;
+  width:100%!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+.customRangeInputs input{
+  width:100%!important;
+  max-width:none!important;
+  min-height:48px!important;
+  padding:10px 12px!important;
+  border:1px solid rgba(191,206,238,.2)!important;
+  border-radius:13px!important;
+  color:var(--text)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025))!important;
+  box-sizing:border-box!important;
+}
+
+.customRangeInputs > span{
+  display:block!important;
+  min-width:22px!important;
+  color:var(--muted)!important;
+  text-align:center!important;
+  font-weight:850!important;
+}
+
+/*
+  When Custom range is visible, give the header a dedicated two-row layout.
+  This prevents the end input from colliding with the Sound control.
+*/
+@media (min-width:1181px){
+  .headerActions:has(.customRangeGroup:not([hidden])){
+    position:relative!important;
+    display:grid!important;
+    grid-template-columns:
+      minmax(138px,1fr)
+      minmax(138px,1fr)
+      minmax(150px,1fr)
+      minmax(150px,1fr)
+      minmax(120px,.8fr)
+      64px!important;
+    grid-template-rows:auto auto!important;
+    align-items:end!important;
+    gap:12px!important;
+    max-width:none!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .playerButton{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .levelButton{
+    grid-column:2!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .controlGroup:has(#mode){
+    grid-column:3 / 5!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .controlGroup:has(#gameType){
+    grid-column:5 / 7!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeGroup{
+    grid-column:1 / 4!important;
+    grid-row:2!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .soundControl{
+    grid-column:4!important;
+    grid-row:2!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .headerButtons{
+    grid-column:5!important;
+    grid-row:2!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    grid-template-rows:none!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .profileAvatarButton{
+    grid-column:6!important;
+    grid-row:2!important;
+    align-self:center!important;
+    justify-self:center!important;
+  }
+}
+
+@media (max-width:1180px){
+  .headerActions:has(.customRangeGroup:not([hidden])){
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeGroup{
+    grid-column:1 / -1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .headerButtons{
+    grid-template-columns:1fr 1fr!important;
+    grid-template-rows:none!important;
+  }
+}
+
+@media (max-width:620px){
+  .headerActions:has(.customRangeGroup:not([hidden])){
+    grid-template-columns:1fr!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) > *{
+    grid-column:1!important;
+  }
+
+  .customRangeInputs{
+    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
+  }
+}
+
+/* Result modal: smaller typography, cleaner spacing, and no horizontal clipping. */
+#resultOverlay{
+  padding:18px!important;
+  overflow:hidden!important;
+}
+
+#resultOverlay > .modal.card{
+  width:min(900px,calc(100vw - 36px))!important;
+  max-width:900px!important;
+  max-height:calc(100vh - 36px)!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  padding:26px 28px 30px!important;
+  border-radius:24px!important;
+}
+
+#resultOverlay .modalTop{
+  gap:18px!important;
+  padding-bottom:18px!important;
+  margin-bottom:18px!important;
+  border-bottom:1px solid var(--line)!important;
+}
+
+#resultOverlay .resultEmoji{
+  font-size:1.8rem!important;
+  margin:0 0 8px!important;
+}
+
+#resultOverlay #resultTitle{
+  max-width:720px!important;
+  margin:0 0 7px!important;
+  font-size:clamp(1.75rem,3.2vw,2.55rem)!important;
+  line-height:1.05!important;
+  letter-spacing:-.035em!important;
+}
+
+#resultOverlay #resultText{
+  max-width:680px!important;
+  margin:0!important;
+  font-size:clamp(.98rem,1.5vw,1.16rem)!important;
+  line-height:1.45!important;
+}
+
+#resultOverlay .resultScore{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:20px 0 14px!important;
+  overflow:hidden!important;
+  white-space:nowrap!important;
+  font-family:inherit!important;
+  font-size:clamp(3rem,8vw,5.25rem)!important;
+  font-weight:950!important;
+  line-height:.94!important;
+  letter-spacing:-.06em!important;
+}
+
+#resultOverlay .resultBadge{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  width:auto!important;
+  max-width:100%!important;
+  min-height:48px!important;
+  margin:0 0 16px!important;
+  padding:8px 15px!important;
+}
+
+#resultOverlay .resultBadge img{
+  width:38px!important;
+  height:44px!important;
+  object-fit:contain!important;
+}
+
+#resultOverlay .resultsGrid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:14px!important;
+  margin-top:16px!important;
+}
+
+#resultOverlay .resultsPanel{
+  min-width:0!important;
+  padding:16px 18px!important;
+}
+
+#resultOverlay .resultsPanel h3{
+  font-size:1.08rem!important;
+}
+
+#resultOverlay .resultRow{
+  gap:14px!important;
+  padding:8px 0!important;
+  font-size:.92rem!important;
+}
+
+#resultOverlay .resultRow strong{
+  min-width:0!important;
+  overflow-wrap:anywhere!important;
+  text-align:right!important;
+}
+
+@media (max-width:700px){
+  #resultOverlay{
+    padding:10px!important;
+  }
+
+  #resultOverlay > .modal.card{
+    width:calc(100vw - 20px)!important;
+    max-height:calc(100vh - 20px)!important;
+    padding:20px 17px 24px!important;
+  }
+
+  #resultOverlay .resultScore{
+    font-size:clamp(2.8rem,18vw,4.5rem)!important;
+  }
+
+  #resultOverlay .resultsGrid{
+    grid-template-columns:1fr!important;
+  }
+}
