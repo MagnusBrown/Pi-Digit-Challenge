@@ -1220,3 +1220,170 @@ body{
   .stats{grid-template-columns:1fr 1fr}
   .stat{min-height:110px}
 }
+
+
+/* =========================================================
+   COMPACT HEARTS AND RESULT MODAL FIX
+   ========================================================= */
+
+/* Keep every remaining life visible on one clean line. */
+#lives{
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:clamp(8px,.85vw,16px)!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow:visible!important;
+  white-space:nowrap!important;
+  font-size:clamp(1.55rem,1.9vw,2.15rem)!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+  word-spacing:0!important;
+}
+
+#lives span{
+  display:block!important;
+  flex:0 0 auto!important;
+  width:auto!important;
+  margin:0!important;
+  font-size:1em!important;
+  line-height:1!important;
+  transform:none!important;
+}
+
+/* Prevent the stat cards from becoming oversized and visually noisy. */
+.stats{
+  gap:clamp(12px,1vw,18px)!important;
+}
+
+.stat{
+  min-width:0!important;
+  min-height:112px!important;
+  padding:20px 22px!important;
+}
+
+.stat .label{
+  margin-bottom:10px!important;
+}
+
+.stat .value{
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+  font-size:clamp(1.9rem,3vw,3.15rem)!important;
+  line-height:1!important;
+}
+
+/* The hearts must not inherit the generic value overflow rule. */
+.stat #lives{
+  overflow:visible!important;
+}
+
+/* Compact the result overlay and restore a sensible visual hierarchy. */
+#resultOverlay .modal{
+  width:min(1040px,calc(100vw - 32px))!important;
+  max-height:92vh!important;
+  padding:clamp(22px,2.5vw,34px)!important;
+}
+
+#resultOverlay .modalTop{
+  align-items:flex-start!important;
+  margin-bottom:18px!important;
+}
+
+#resultOverlay .resultEmoji{
+  font-size:2.15rem!important;
+  line-height:1!important;
+  margin-bottom:10px!important;
+}
+
+#resultOverlay #resultTitle{
+  font-size:clamp(1.8rem,3vw,2.65rem)!important;
+  line-height:1.05!important;
+  margin:0 0 8px!important;
+}
+
+#resultOverlay #resultText{
+  max-width:720px!important;
+  margin:0!important;
+  font-size:clamp(1rem,1.5vw,1.25rem)!important;
+  line-height:1.45!important;
+}
+
+#resultOverlay .resultScore{
+  margin:22px 0 16px!important;
+  font-family:inherit!important;
+  font-size:clamp(3.5rem,8vw,6.4rem)!important;
+  line-height:.9!important;
+  letter-spacing:-.055em!important;
+  color:var(--text)!important;
+  text-shadow:0 8px 28px rgba(0,0,0,.28)!important;
+}
+
+#resultOverlay .resultBadge{
+  gap:10px!important;
+  min-height:52px!important;
+  padding:9px 16px!important;
+  margin-bottom:18px!important;
+}
+
+#resultOverlay .resultBadge img{
+  width:42px!important;
+  height:48px!important;
+}
+
+#resultOverlay .resultBadge span{
+  font-size:1.05rem!important;
+}
+
+#resultOverlay .xpResult{
+  margin-top:14px!important;
+}
+
+#resultOverlay .resultsGrid{
+  margin-top:18px!important;
+  gap:14px!important;
+}
+
+#resultOverlay .resultsPanel{
+  padding:16px!important;
+}
+
+#resultOverlay .resultsPanel h3{
+  font-size:1.15rem!important;
+  margin-bottom:8px!important;
+}
+
+#resultOverlay .resultRow{
+  padding:8px 0!important;
+  font-size:.95rem!important;
+}
+
+@media (max-width:760px){
+  #lives{
+    gap:8px!important;
+    font-size:1.5rem!important;
+  }
+
+  .stat{
+    min-height:102px!important;
+    padding:17px 18px!important;
+  }
+
+  .stat .value{
+    font-size:clamp(1.7rem,8vw,2.55rem)!important;
+  }
+
+  #resultOverlay .resultScore{
+    font-size:clamp(3rem,18vw,5rem)!important;
+  }
+
+  #resultOverlay .resultsGrid{
+    grid-template-columns:1fr!important;
+  }
+}
