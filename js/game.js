@@ -1,4 +1,4 @@
-import { PI_DIGITS, MEDALS, MAX_DIGITS } from "./config.js";
+import { PI_DIGITS, getMedalStandards, MAX_DIGITS } from "./config.js";
 import { formatTime } from "./utils.js";
 import { getBestTime, saveBestTime } from "./storage.js";
 
@@ -203,9 +203,13 @@ export class PiGame {
     const digitsPerMinute = this.state.elapsed > 0
       ? this.state.index / (this.state.elapsed / 60000)
       : 0;
-    const pace = this.state.elapsed / 1000 / Math.max(1, this.state.total);
+    const elapsedSeconds = this.state.elapsed / 1000;
+    const digitsPerSecond = elapsedSeconds > 0
+      ? this.state.total / elapsedSeconds
+      : 0;
     const medal = this.state.gameType === "competition" && completed
-      ? (MEDALS.find(medal => pace <= medal.pace)?.name || "None")
+      ? (getMedalStandards(this.state.total)
+          .find(standard => digitsPerSecond >= standard.digitsPerSecond)?.name || "None")
       : null;
 
     const run = {
@@ -227,6 +231,7 @@ export class PiGame {
       finishedAt: new Date().toISOString(),
       fastestTenMs: this.state.fastestTenMs,
       digitsPerMinute,
+      digitsPerSecond,
       medal,
       trainingBlocks: [...this.state.trainingBlocks],
       manualHelpCount: this.state.manualHelpCount

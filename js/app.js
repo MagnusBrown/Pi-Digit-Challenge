@@ -1,5 +1,5 @@
 import { $, cleanUsername, escapeHtml, formatTime, showToast } from "./utils.js";
-import { MEDALS, PI_DIGITS } from "./config.js";
+import { MEDALS, getMedalStandards, PI_DIGITS } from "./config.js";
 import { saveLocalRun, getLocalRuns, exportAllData, importAllData, clearAllGameData } from "./storage.js";
 import { Leaderboard } from "./leaderboard.js";
 import { PiGame } from "./game.js";
@@ -188,10 +188,12 @@ function renderResult(run,history=false,xpAward=null){
     e.resultBadge.className="resultBadge";
     e.resultBadge.innerHTML=`<span>${run.completed?"No medal":`${run.wrong} incorrect ${run.wrong===1?"attempt":"attempts"}`}</span>`;
   }
-  const attempts=run.score+(run.wrong||0),accuracy=attempts?run.score/attempts*100:100,pace=run.time/1000/Math.max(1,run.score);
+  const attempts=run.score+(run.wrong||0),accuracy=attempts?run.score/attempts*100:100;
+  const elapsedSeconds=run.time/1000;
+  const digitsPerSecond=run.digitsPerSecond??(elapsedSeconds>0?run.score/elapsedSeconds:0);
   e.resultStats.innerHTML=[
     ["Score",`${run.score} / ${run.total}`],["Time",formatTime(run.time,true)],["Accuracy",`${accuracy.toFixed(2)}%`],["Incorrect attempts",run.wrong],
-    ["Lives remaining",run.gameType==="training"?"—":run.livesRemaining],["Longest streak",run.longestStreak],["Average pace",`${pace.toFixed(2)} sec/digit`],
+    ["Lives remaining",run.gameType==="training"?"—":run.livesRemaining],["Longest streak",run.longestStreak],["Average speed",`${digitsPerSecond.toFixed(2)} digits/sec`],
     ["Digits per minute",(run.digitsPerMinute||0).toFixed(1)],["Fastest 10",run.fastestTenMs?formatTime(run.fastestTenMs,true):"—"],["XP earned",run.xpEarned||"—"],["Level after run",run.levelAfter||"—"],["Block hints used",run.manualHelpCount||0]
   ].map(([l,v])=>`<div class="resultRow"><span>${l}</span><strong>${v}</strong></div>`).join("");
   e.resultBoardInfo.innerHTML=[
@@ -201,12 +203,13 @@ function renderResult(run,history=false,xpAward=null){
   e.reviewGrid.innerHTML="";const f=document.createDocumentFragment();
   for(let i=0;i<run.total;i++){const c=document.createElement("div");c.className=`reviewCell ${i<run.score?"correct":"untried"}`;c.textContent=PI_DIGITS[(run.startDigit?run.startDigit-1:0)+i];f.appendChild(c)}e.reviewGrid.appendChild(f);
   e.paceHeader.textContent=`Target time for ${run.total} digits`;
+  const medalStandards=getMedalStandards(run.total);
   e.paceRows.innerHTML=run.gameType==="training"?
     '<tr><td colspan="3">Training mode does not award medals.</td></tr>':
-    MEDALS.map(m=>`<tr class="medalPaceRow ${m.cls}">
+    medalStandards.map(m=>`<tr class="medalPaceRow ${m.cls}">
       <td><span class="medalName"><img src="${m.icon}" alt=""><strong>${m.name}</strong></span></td>
-      <td><span class="comparisonValue">${m.pace.toFixed(2)} sec/digit or faster</span></td>
-      <td><span class="comparisonValue">${formatTime(m.pace*run.total*1000,true)} or faster</span></td>
+      <td><span class="comparisonValue">${m.digitsPerSecond.toFixed(2)} digits/sec or faster</span></td>
+      <td><span class="comparisonValue">${formatTime(m.targetTimeMs,true)} or faster</span></td>
     </tr>`).join("");
   renderXpResult(history?null:xpAward);e.playAgain.style.display=history?"none":"";e.resultOverlay.classList.add("show");
 }
@@ -263,5 +266,5 @@ e.closeFullProfile.onclick=()=>e.fullProfileOverlay.classList.remove("show");e.c
 e.exportData.onclick=()=>{const blob=new Blob([JSON.stringify(exportAllData(),null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`pi-digit-profile-${Date.now()}.json`;a.click();URL.revokeObjectURL(a.href)};
 e.importData.onchange=async x=>{try{importAllData(JSON.parse(await x.target.files[0].text()));location.reload()}catch{showToast(e.toast,"The data file could not be imported.",true)}};
 e.deleteData.onclick=()=>{if(confirm("This permanently deletes your profile, runs, records, and achievements. Continue?")){clearAllGameData();location.reload()}};
-window.addEventListener("keydown",x=>{if(e.achievementOverlay.classList.contains("show")){if(x.key==="ArrowLeft"){x.preventDefault();navigateAchievement(-1);return}if(x.key==="ArrowRight"){x.preventDefault();navigateAchievement(1);return}if(x.key==="Escape"){x.preventDefault();e.achievementOverlay.classList.remove("show");return}}if(x.key==="Escape"){e.resultOverlay.classList.remove("show");e.fullProfileOverlay.classList.remove("show");closeName()}});
+window.addEventListener("keydown",x=>{if(e.achievementOverlay.classList.contains("show")){if(x.key==="ArrowLeft"){x.preventDefault();navigateAchievement(-1);return}if(x.key==="ArrowRight"){x.preventDefault();navigateAchievement(1);return}}if(x.key==="Escape"){e.resultOverlay.classList.remove("show");e.fullProfileOverlay.classList.remove("show");e.achievementOverlay.classList.remove("show");closeName()}});
 updateProfileUI();renderLevelUI();leaderboard.load();loadMiniStats();if(!profile.username){e.username.value="Magnus";openName(true)}
