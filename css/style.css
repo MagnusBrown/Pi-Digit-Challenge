@@ -1848,3 +1848,209 @@ body{
     width:min(300px,68vw)!important;
   }
 }
+
+
+/* =========================================================
+   COMPACT CUSTOM RANGE HEADER LAYOUT
+   ========================================================= */
+
+/*
+  Compact the Custom range header without changing its markup or behavior.
+  The avatar receives a dedicated in-frame column.
+*/
+@media (min-width:1181px){
+  .headerActions:has(.customRangeGroup:not([hidden])){
+    box-sizing:border-box!important;
+    width:100%!important;
+    max-width:none!important;
+    padding:14px!important;
+    display:grid!important;
+    grid-template-columns:
+      150px
+      140px
+      minmax(210px,1fr)
+      minmax(210px,1fr)
+      180px
+      270px
+      66px!important;
+    grid-template-rows:auto auto!important;
+    align-items:end!important;
+    column-gap:12px!important;
+    row-gap:14px!important;
+    overflow:hidden!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .playerButton{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .levelButton{
+    grid-column:2!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .controlGroup:has(#mode){
+    grid-column:3 / 5!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .controlGroup:has(#gameType){
+    grid-column:5 / 8!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeGroup{
+    grid-column:1 / 4!important;
+    grid-row:2!important;
+    width:min(100%,430px)!important;
+    justify-self:start!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeInputs{
+    grid-template-columns:170px auto 170px!important;
+    width:auto!important;
+    max-width:430px!important;
+    justify-content:start!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeInputs input{
+    width:170px!important;
+    min-width:0!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .soundControl{
+    grid-column:4 / 6!important;
+    grid-row:2!important;
+    width:180px!important;
+    max-width:180px!important;
+    justify-self:start!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .soundControl .soundToggleLine{
+    width:180px!important;
+    min-width:180px!important;
+    min-height:54px!important;
+    box-sizing:border-box!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .headerButtons{
+    grid-column:6!important;
+    grid-row:2!important;
+    width:270px!important;
+    max-width:270px!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    grid-template-rows:none!important;
+    gap:10px!important;
+    justify-self:start!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .headerButtons button{
+    width:100%!important;
+    min-width:0!important;
+    min-height:54px!important;
+    padding:10px 14px!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .profileAvatarButton{
+    position:relative!important;
+    grid-column:7!important;
+    grid-row:2!important;
+    width:58px!important;
+    height:58px!important;
+    min-width:58px!important;
+    min-height:58px!important;
+    align-self:center!important;
+    justify-self:center!important;
+    margin:0!important;
+    right:auto!important;
+    top:auto!important;
+    transform:none!important;
+    z-index:1!important;
+  }
+}
+
+/* Remove the translucent wrapper panel around Sound in every layout. */
+.soundControl{
+  background:transparent!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Step down cleanly before the desktop grid becomes cramped. */
+@media (min-width:1181px) and (max-width:1540px){
+  .headerActions:has(.customRangeGroup:not([hidden])){
+    grid-template-columns:
+      132px
+      126px
+      minmax(180px,1fr)
+      minmax(180px,1fr)
+      158px
+      238px
+      60px!important;
+    column-gap:10px!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeGroup{
+    width:min(100%,380px)!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeInputs{
+    grid-template-columns:148px auto 148px!important;
+    max-width:380px!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeInputs input{
+    width:148px!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .soundControl,
+  .headerActions:has(.customRangeGroup:not([hidden])) .soundControl .soundToggleLine{
+    width:158px!important;
+    min-width:158px!important;
+    max-width:158px!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .headerButtons{
+    width:238px!important;
+    max-width:238px!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .profileAvatarButton{
+    width:54px!important;
+    height:54px!important;
+    min-width:54px!important;
+    min-height:54px!important;
+  }
+}
+
+@media (max-width:1180px){
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeGroup,
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeInputs{
+    width:100%!important;
+    max-width:none!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .soundControl{
+    width:100%!important;
+    max-width:none!important;
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .profileAvatarButton{
+    position:static!important;
+    justify-self:end!important;
+    margin:0!important;
+  }
+}
