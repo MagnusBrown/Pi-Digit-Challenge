@@ -2054,3 +2054,157 @@ body{
     margin:0!important;
   }
 }
+
+
+/* =========================================================
+   BALANCED CUSTOM RANGE HEADER
+   ========================================================= */
+
+/*
+  Use a 12-column proportional grid instead of oversized fixed columns.
+  This keeps the right-side controls and avatar inside the frame.
+*/
+@media (min-width:1181px){
+  .headerActions:has(.customRangeGroup:not([hidden])){
+    display:grid!important;
+    grid-template-columns:repeat(12,minmax(0,1fr))!important;
+    grid-template-rows:auto auto!important;
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    align-items:end!important;
+    gap:12px!important;
+    padding:14px!important;
+    overflow:hidden!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .playerButton{
+    grid-column:1 / 3!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .levelButton{
+    grid-column:3 / 5!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .controlGroup:has(#mode){
+    grid-column:5 / 9!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .controlGroup:has(#gameType){
+    grid-column:9 / 13!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeGroup{
+    grid-column:1 / 5!important;
+    grid-row:2!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    justify-self:stretch!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeInputs{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    gap:10px!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeInputs input{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .soundControl{
+    grid-column:5 / 7!important;
+    grid-row:2!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    justify-self:stretch!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .soundControl .soundToggleLine{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    min-height:54px!important;
+    box-sizing:border-box!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .headerButtons{
+    grid-column:7 / 11!important;
+    grid-row:2!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    gap:10px!important;
+    justify-self:stretch!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .headerButtons button{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    min-height:54px!important;
+    padding:10px 14px!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .profileAvatarButton{
+    position:static!important;
+    grid-column:11 / 13!important;
+    grid-row:2!important;
+    width:58px!important;
+    height:58px!important;
+    min-width:58px!important;
+    min-height:58px!important;
+    max-width:58px!important;
+    max-height:58px!important;
+    align-self:center!important;
+    justify-self:center!important;
+    margin:0!important;
+    right:auto!important;
+    top:auto!important;
+    transform:none!important;
+    z-index:1!important;
+  }
+}
+
+/* Slightly denser desktop layout when available width is limited. */
+@media (min-width:1181px) and (max-width:1450px){
+  .headerActions:has(.customRangeGroup:not([hidden])){
+    gap:9px!important;
+    padding:12px!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .headerButtons button{
+    padding-left:10px!important;
+    padding-right:10px!important;
+    font-size:.95rem!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .profileAvatarButton{
+    width:52px!important;
+    height:52px!important;
+    min-width:52px!important;
+    min-height:52px!important;
+    max-width:52px!important;
+    max-height:52px!important;
+  }
+}
