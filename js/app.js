@@ -7,7 +7,7 @@ import { ACHIEVEMENTS, unlocked, context, evaluate } from "./achievements.js";
 import { getLevelState, awardRunXp } from "./levels.js";
 
 const e = {
-  mode:$("mode"),gameType:$("gameType"),start:$("startBtn"),reset:$("resetBtn"),input:$("digitInput"),
+  mode:$("mode"),gameType:$("gameType"),customRangeGroup:$("customRangeGroup"),customStart:$("customStart"),customEnd:$("customEnd"),start:$("startBtn"),reset:$("resetBtn"),input:$("digitInput"),
   sound:$("soundToggle"),lives:$("lives"),timer:$("timer"),progressText:$("progressText"),
   accuracy:$("accuracy"),record:$("record"),position:$("position"),modeLine:$("modeLine"),
   recent:$("recentDigits"),ellipsis:$("leadingEllipsis"),marker:$("currentMarker"),hint:$("hint"),
@@ -110,11 +110,29 @@ function loadMiniStats(){
     [s.total,"Runs"],[s.completed,"Completed"],[s.correct,"Total correct"],[`${s.accuracy.toFixed(1)}%`,"Average accuracy"],[s.streak,"Longest streak"],[s.best,"Best score"]
   ].map(([v,l])=>`<div class="miniStat"><b>${v}</b><span>${l}</span></div>`).join(""):'<p class="empty">No statistics yet.</p>';
 }
+const achievementToastQueue=[];
+let achievementToastActive=false;
 function showAchievementToast(a){
+  achievementToastQueue.push(a);
+  if(!achievementToastActive)playNextAchievementToast();
+}
+function playNextAchievementToast(){
+  const a=achievementToastQueue.shift();
+  if(!a){achievementToastActive=false;return}
+  achievementToastActive=true;
   const box=document.createElement("div");box.className="achievementToast";
   box.innerHTML=`<img src="${a.img}" alt=""><div><b>Achievement unlocked!</b><span>${escapeHtml(a.name)}</span></div>`;
-  document.body.appendChild(box);requestAnimationFrame(()=>box.classList.add("show"));
-  setTimeout(()=>{box.classList.remove("show");setTimeout(()=>box.remove(),300)},4200);
+  document.body.appendChild(box);
+  requestAnimationFrame(()=>box.classList.add("show"));
+  setTimeout(()=>{box.classList.remove("show");setTimeout(()=>{box.remove();playNextAchievementToast()},350)},2500);
+}
+function formatUnlockDate(value){
+  if(!value)return "—";
+  return new Intl.DateTimeFormat("en-US",{month:"short",day:"numeric",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(value));
+}
+function modeLabel(run){
+  if(run?.custom&&run.startDigit&&run.endDigit)return `digits ${run.startDigit}–${run.endDigit}`;
+  return `${run?.total||0} digits`;
 }
 function openAchievement(a){
   const u=unlocked()[a.id];
@@ -122,7 +140,7 @@ function openAchievement(a){
   e.achievementImage.src=a.img;e.achievementImage.alt=a.name;
   e.achievementRarity.textContent=a.rarity;e.achievementDescription.textContent=a.secret&&!u?"This achievement remains hidden until you unlock it.":a.desc;
   e.achievementStatus.textContent=u?"Unlocked":"Locked";
-  e.achievementUnlockInfo.textContent=u?`Unlocked ${new Date(u.unlockedAt).toLocaleString("en-US")}`:"Keep playing to unlock it.";
+  e.achievementUnlockInfo.textContent=u?`Unlocked ${formatUnlockDate(u.unlockedAt)}`:"Keep playing to unlock it.";
   e.achievementOverlay.classList.add("show");
 }
 function renderAchievements(){
@@ -157,28 +175,39 @@ function renderResult(run,history=false,xpAward=null){
     ["Digits per minute",(run.digitsPerMinute||0).toFixed(1)],["Fastest 10",run.fastestTenMs?formatTime(run.fastestTenMs,true):"—"],["XP earned",run.xpEarned||"—"],["Level after run",run.levelAfter||"—"],["Block hints used",run.manualHelpCount||0]
   ].map(([l,v])=>`<div class="resultRow"><span>${l}</span><strong>${v}</strong></div>`).join("");
   e.resultBoardInfo.innerHTML=[
-    ["Player",run.name],["Game type",run.gameType==="training"?"Training":"Competition"],["Mode",`${run.total} digits`],["Status",run.completed?"Completed":"Incomplete"],
+    ["Player",run.name],["Game type",run.gameType==="training"?"Training":"Competition"],["Mode",modeLabel(run)],["Status",run.completed?"Completed":"Incomplete"],
     ["Medal",run.gameType==="training"?"None":medalLabel(run.medal)],["Saved",run.finishedAt?new Date(run.finishedAt).toLocaleString("en-US"):"—"]
   ].map(([l,v])=>`<div class="resultRow"><span>${l}</span><strong>${escapeHtml(v)}</strong></div>`).join("");
   e.reviewGrid.innerHTML="";const f=document.createDocumentFragment();
-  for(let i=0;i<run.total;i++){const c=document.createElement("div");c.className=`reviewCell ${i<run.score?"correct":"untried"}`;c.textContent=PI_DIGITS[i];f.appendChild(c)}e.reviewGrid.appendChild(f);
+  for(let i=0;i<run.total;i++){const c=document.createElement("div");c.className=`reviewCell ${i<run.score?"correct":"untried"}`;c.textContent=PI_DIGITS[(run.startDigit?run.startDigit-1:0)+i];f.appendChild(c)}e.reviewGrid.appendChild(f);
   e.paceHeader.textContent=`Target time for ${run.total} digits`;
-  e.paceRows.innerHTML=run.gameType==="training"?'<tr><td colspan="3">Training mode does not award medals.</td></tr>':MEDALS.map(m=>`<tr class="medalPaceRow ${m.cls}">
+  e.paceRows.innerHTML=run.gameType==="training"?
+    '<tr><td colspan="3">Training mode does not award medals.</td></tr>':
+    MEDALS.map(m=>`<tr class="medalPaceRow ${m.cls}">
       <td><span class="medalName"><img src="${m.icon}" alt=""><strong>${m.name}</strong></span></td>
-      <td><span class="comparisonSign">≤</span><span class="comparisonValue">${m.pace.toFixed(1)} sec/digit</span></td>
-      <td><span class="comparisonSign">≤</span><span class="comparisonValue">${formatTime(m.pace*run.total*1000,true)}</span></td>
+      <td><span class="comparisonValue">${m.pace.toFixed(2)} sec/digit or faster</span></td>
+      <td><span class="comparisonValue">${formatTime(m.pace*run.total*1000,true)} or faster</span></td>
     </tr>`).join("");
   renderXpResult(history?null:xpAward);e.playAgain.style.display=history?"none":"";e.resultOverlay.classList.add("show");
 }
 function openFullProfile(){
   const s=stats(),runs=s.runs,levelState=getLevelState();
-  e.fullProfileName.textContent=profile.username;e.profileMemberSince.textContent=`Profil siden ${new Date(localStorage.getItem("pi-profile-created-at")).toLocaleDateString("en-US")}`;
+  e.fullProfileName.textContent=profile.username;e.profileMemberSince.textContent=`Profile since ${new Date(localStorage.getItem("pi-profile-created-at")).toLocaleDateString("en-US")}`;
   e.fullProfileStats.innerHTML=[[levelState.level,"Level"],[levelState.totalXp.toLocaleString("en-US"),"Total XP"],[s.total,"Total runs"],[s.completed,"Completed"],[s.correct,"Total correct"],[`${s.accuracy.toFixed(1)}%`,"Accuracy"],[s.streak,"Longest streak"],[s.fastest?formatTime(s.fastest,true):"—","Fastest 10"],[s.training,"Training digits"],[Object.keys(unlocked()).length,"Achievements"]].map(([v,l])=>`<div class="miniStat"><b>${v}</b><span>${l}</span></div>`).join("");
   e.bestByMode.innerHTML=[20,50,100,200,400,750,1000].map(mode=>{const mr=runs.filter(r=>r.total===mode&&(r.gameType||"competition")==="competition"),done=mr.filter(r=>r.completed).sort((a,b)=>a.time-b.time)[0],best=mr.sort((a,b)=>b.score-a.score||a.time-b.time)[0];return `<div class="bestModeRow"><strong>${mode}</strong><span>${done?formatTime(done.time,true):"Not completed"}</span><span>${best?`${best.score}/${mode}`:"—"}</span><span>${done?.medal?medalLabel(done.medal):"—"}</span></div>`}).join("");
-  e.recentRuns.innerHTML=runs.slice(0,12).map(r=>`<div class="recentRunRow" data-id="${r.id}"><strong>${r.gameType==="training"?"Training":"Competition"} ${r.total}</strong><span>${r.score}/${r.total}</span><span>${formatTime(r.time,true)}</span><span>${new Date(r.finishedAt).toLocaleDateString("en-US")}</span></div>`).join("")||'<p class="empty">No runs yet.</p>';
+  e.recentRuns.innerHTML=runs.slice(0,12).map(r=>`<div class="recentRunRow" data-id="${r.id}"><strong>${r.gameType==="training"?"Training":"Competition"} ${r.custom?`${r.startDigit}–${r.endDigit}`:r.total}</strong><span>${r.score}/${r.total}</span><span>${formatTime(r.time,true)}</span><span>${new Date(r.finishedAt).toLocaleDateString("en-US")}</span></div>`).join("")||'<p class="empty">No runs yet.</p>';
   e.recentRuns.querySelectorAll(".recentRunRow").forEach(row=>row.onclick=()=>{const r=getLocalRuns().find(x=>x.id===row.dataset.id);if(r){e.fullProfileOverlay.classList.remove("show");renderResult(r,true)}});
   renderLevelUI();renderAchievements();e.fullProfileOverlay.classList.add("show");
 }
+
+function updateCustomRangeUI(){
+  const training=e.gameType.value==="training";
+  [...e.mode.options].forEach(option=>{if(option.value==="custom")option.disabled=!training});
+  if(!training&&e.mode.value==="custom")e.mode.value="100";
+  const custom=training&&e.mode.value==="custom";
+  if(e.customRangeGroup)e.customRangeGroup.hidden=!custom;
+}
+updateCustomRangeUI();
 
 const leaderboard=new Leaderboard({profile,elements:e,onRunSelect:r=>renderResult(r,true)});
 const game=new PiGame(e,{
@@ -195,7 +224,7 @@ const game=new PiGame(e,{
       newPersonalBest:run.gameType==="competition"&&run.completed&&(!oldBest||run.time<oldBest.time),
       level:xpAward.after.level
     }));
-    fresh.forEach((a,i)=>setTimeout(()=>showAchievementToast(a),i*650));
+    fresh.forEach(a=>showAchievementToast(a));
     renderResult(run,false,xpAward);renderLevelUI();
     leaderboard.type=run.completed?"completed":"failed";await leaderboard.load();loadMiniStats();
     showToast(e.toast,"Your result has been saved in this browser.");
@@ -204,7 +233,7 @@ const game=new PiGame(e,{
 
 e.status.textContent="Local save";e.status.className="status online";
 e.input.oninput=()=>game.submit(e.input.value.slice(-1));e.start.onclick=()=>game.start();e.reset.onclick=()=>game.reset();
-e.mode.onchange=async()=>{game.reset();await leaderboard.load()};e.gameType.onchange=async()=>{game.reset();await leaderboard.load()};
+e.mode.onchange=async()=>{updateCustomRangeUI();game.reset();await leaderboard.load()};e.gameType.onchange=async()=>{updateCustomRangeUI();game.reset();await leaderboard.load()};[e.customStart,e.customEnd].forEach(input=>input&&(input.onchange=()=>{game.reset()}));
 e.showBlockBtn.onclick=()=>game.showTrainingBlock(true);e.profileAvatarBtn.onclick=openFullProfile;e.profileBtn.onclick=()=>openName(false);e.editProfile.onclick=openFullProfile;
 e.closeProfile.onclick=closeName;e.saveProfile.onclick=saveName;e.username.onkeydown=x=>{if(x.key==="Enter")saveName()};
 document.querySelectorAll(".boardTab").forEach(b=>b.onclick=async()=>{leaderboard.type=b.dataset.board;await leaderboard.load()});

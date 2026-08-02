@@ -1,4 +1,4 @@
-import { PI_DIGITS } from "./config.js";
+import { PI_DIGITS, MEDALS, MAX_DIGITS } from "./config.js";
 import { formatTime } from "./utils.js";
 import { getBestTime, saveBestTime } from "./storage.js";
 
@@ -13,9 +13,30 @@ export class PiGame {
   }
 
   initialState() {
+    const gameType = this.elements.gameType.value;
+    const rawMode = this.elements.mode.value;
+    const custom = gameType === "training" && rawMode === "custom";
+    const max = MAX_DIGITS || PI_DIGITS.length;
+    let startDigit = 1;
+    let endDigit = Number(rawMode) || 100;
+
+    if (custom) {
+      const from = Number(this.elements.customStart?.value) || 1;
+      const to = Number(this.elements.customEnd?.value) || from;
+      startDigit = Math.max(1, Math.min(max, Math.floor(Math.min(from, to))));
+      endDigit = Math.max(startDigit, Math.min(max, Math.floor(Math.max(from, to))));
+    } else {
+      endDigit = Math.min(max, Math.max(1, endDigit));
+    }
+
     return {
-      total: Number(this.elements.mode.value),
-      gameType: this.elements.gameType.value,
+      total: endDigit - startDigit + 1,
+      displayMode: custom ? `${startDigit}–${endDigit}` : String(endDigit),
+      startDigit,
+      endDigit,
+      startIndex: startDigit - 1,
+      custom,
+      gameType,
       index: 0,
       lives: 5,
       wrong: 0,
@@ -43,6 +64,7 @@ export class PiGame {
     this.elements.input.disabled = true;
     this.elements.mode.disabled = false;
     this.elements.gameType.disabled = false;
+    this.setCustomInputsDisabled(false);
     this.elements.start.disabled = false;
     this.elements.trainingReveal.classList.remove("show");
     document.body.classList.toggle("trainingMode", this.state.gameType === "training");
@@ -63,12 +85,27 @@ export class PiGame {
     this.elements.input.disabled = false;
     this.elements.mode.disabled = true;
     this.elements.gameType.disabled = true;
+    this.setCustomInputsDisabled(true);
     this.elements.start.disabled = true;
     this.elements.hint.textContent = this.state.gameType === "training"
       ? "Practice freely. After a mistake, the current 10-digit block appears briefly."
       : "Enter the next digit. Each mistake costs one life.";
     this.update();
     this.elements.input.focus();
+  }
+
+  setCustomInputsDisabled(disabled) {
+    if (!this.elements.customStart || !this.elements.customEnd) return;
+    this.elements.customStart.disabled = disabled;
+    this.elements.customEnd.disabled = disabled;
+  }
+
+  currentDigit() {
+    return PI_DIGITS[this.state.startIndex + this.state.index];
+  }
+
+  digitAt(localIndex) {
+    return PI_DIGITS[this.state.startIndex + localIndex];
   }
 
   submit(value) {
@@ -80,7 +117,7 @@ export class PiGame {
       this.startTimer();
     }
 
-    if (value === PI_DIGITS[this.state.index]) {
+    if (value === this.currentDigit()) {
       const now = performance.now();
       this.state.correctTimes.push(now);
       if (this.state.correctTimes.length >= 10) {
@@ -125,13 +162,14 @@ export class PiGame {
 
   showTrainingBlock(manual = true) {
     if (!this.state.running || this.state.gameType !== "training") return;
-    const blockStart = Math.floor(this.state.index / 10) * 10;
+    const globalIndex = this.state.startIndex + this.state.index;
+    const blockStart = Math.floor(globalIndex / 10) * 10;
     this.state.trainingBlocks.add(blockStart);
     if (manual) this.state.manualHelpCount += 1;
 
-    const digits = PI_DIGITS.slice(blockStart, Math.min(blockStart + 10, this.state.total));
+    const digits = PI_DIGITS.slice(blockStart, Math.min(blockStart + 10, PI_DIGITS.length));
     this.elements.trainingRevealDigits.innerHTML = [...digits].map((digit, offset) =>
-      `<span class="${blockStart + offset === this.state.index ? "target" : ""}">${digit}</span>`
+      `<span class="${blockStart + offset === globalIndex ? "target" : ""}">${digit}</span>`
     ).join("");
 
     this.elements.trainingReveal.classList.add("show");
@@ -159,6 +197,7 @@ export class PiGame {
     this.elements.input.disabled = true;
     this.elements.mode.disabled = false;
     this.elements.gameType.disabled = false;
+    this.setCustomInputsDisabled(false);
     this.elements.start.disabled = false;
 
     const digitsPerMinute = this.state.elapsed > 0
@@ -166,13 +205,17 @@ export class PiGame {
       : 0;
     const pace = this.state.elapsed / 1000 / Math.max(1, this.state.total);
     const medal = this.state.gameType === "competition" && completed
-      ? pace <= 0.9 ? "Gold" : pace <= 1.5 ? "Silver" : pace <= 2.3 ? "Bronze" : "None"
+      ? (MEDALS.find(medal => pace <= medal.pace)?.name || "None")
       : null;
 
     const run = {
       id: crypto.randomUUID(),
       name: this.callbacks.getPlayerName(),
       total: this.state.total,
+      displayMode: this.state.displayMode,
+      startDigit: this.state.startDigit,
+      endDigit: this.state.endDigit,
+      custom: this.state.custom,
       gameType: this.state.gameType,
       score: this.state.index,
       time: this.state.elapsed,
@@ -232,25 +275,25 @@ export class PiGame {
       const correct = index < this.state.index;
       const revealed = this.state.reveal && !correct;
       cell.className = `cell${correct ? " correct" : ""}${this.state.running && index === this.state.index ? " current" : ""}${revealed ? " revealed" : ""}`;
-      cell.textContent = correct || revealed ? PI_DIGITS[index] : "";
+      cell.textContent = correct || revealed ? this.digitAt(index) : "";
     });
   }
 
   updateRecent() {
     const start = Math.max(0, this.state.index - 12);
     this.elements.ellipsis.textContent = start > 0 ? "…" : "";
-    this.elements.recent.textContent = this.state.index ? PI_DIGITS.slice(start, this.state.index) : "—";
+    this.elements.recent.textContent = this.state.index ? PI_DIGITS.slice(this.state.startIndex + start, this.state.startIndex + this.state.index) : "—";
     this.elements.marker.style.display = this.state.running ? "inline-grid" : "none";
   }
 
   update() {
     const attempts = this.state.index + this.state.wrong;
     const training = this.state.gameType === "training";
-    this.elements.modeLine.textContent = `${training ? "Training" : "Competition"} · ${this.state.total.toLocaleString("en-US")} digits`;
+    this.elements.modeLine.textContent = `${training ? "Training" : "Competition"} · ${this.state.custom ? `digits ${this.state.displayMode}` : `${this.state.total.toLocaleString("en-US")} digits`}`;
     this.elements.position.textContent = this.state.running
       ? `Digit ${this.state.index + 1} of ${this.state.total}`
       : this.state.finished ? `${this.state.index} of ${this.state.total} correct` : "Press Start when you are ready";
-    this.elements.lives.textContent = training ? "Unlimited" : ("♥ ".repeat(this.state.lives).trim() || "0");
+    this.elements.lives.innerHTML = training ? '<span class="infiniteLives">∞</span>' : Array.from({length:this.state.lives},()=>"<span>♥</span>").join("");
     this.elements.timer.textContent = formatTime(this.state.elapsed);
     this.elements.progressText.textContent = `${this.state.index} / ${this.state.total}`;
     this.elements.accuracy.textContent = `${(attempts ? this.state.index / attempts * 100 : 100).toFixed(1)}%`;

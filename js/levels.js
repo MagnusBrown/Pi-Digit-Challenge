@@ -79,7 +79,9 @@ export function calculateRunXp(run) {
 
   let medalMultiplier = 1;
   if (run.gameType === "competition" && run.completed) {
-    if (["Gold", "Gull"].includes(run.medal)) medalMultiplier = 1.20;
+    if (["Platinum"].includes(run.medal)) medalMultiplier = 1.45;
+    else if (["Diamond"].includes(run.medal)) medalMultiplier = 1.32;
+    else if (["Gold", "Gull"].includes(run.medal)) medalMultiplier = 1.20;
     else if (["Silver", "Sølv"].includes(run.medal)) medalMultiplier = 1.10;
     else if (["Bronze", "Bronse"].includes(run.medal)) medalMultiplier = 1.05;
   }

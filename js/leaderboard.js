@@ -1,6 +1,8 @@
 import { cleanUsername, escapeHtml, formatTime } from "./utils.js";
 import { getLocalRuns } from "./storage.js";
 
+function modeLabel(run){return run?.custom&&run.startDigit&&run.endDigit?`digits ${run.startDigit}–${run.endDigit}`:`${run.total} digits`}
+
 function medalLabel(value) {
   return ({ Gull: "Gold", Sølv: "Silver", Bronse: "Bronze", Ingen: "None" }[value] || value || "None");
 }
