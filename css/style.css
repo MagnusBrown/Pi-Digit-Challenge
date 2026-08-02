@@ -1648,3 +1648,203 @@ body{
     grid-template-columns:1fr!important;
   }
 }
+
+
+/* =========================================================
+   CURRENT DIGIT, CUSTOM HEADER, AND ACHIEVEMENT NAVIGATION
+   ========================================================= */
+
+/* Replace the oversized red question mark with a quiet neutral next-slot. */
+.sequence .current{
+  position:relative!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:clamp(42px,4.2vw,58px)!important;
+  height:clamp(62px,6vw,82px)!important;
+  margin-left:10px!important;
+  border:2px solid rgba(155,108,255,.72)!important;
+  border-radius:16px!important;
+  background:
+    linear-gradient(180deg,rgba(155,108,255,.13),rgba(104,192,243,.055))!important;
+  box-shadow:
+    0 0 0 8px rgba(155,108,255,.07),
+    inset 0 1px 0 rgba(255,255,255,.08)!important;
+  color:transparent!important;
+  font-size:0!important;
+  line-height:1!important;
+  vertical-align:middle!important;
+  overflow:hidden!important;
+}
+
+.sequence .current::before{
+  content:""!important;
+  width:9px!important;
+  height:9px!important;
+  border-radius:50%!important;
+  background:#9b7cff!important;
+  box-shadow:0 0 16px rgba(155,124,255,.72)!important;
+}
+
+.sequence .current::after{
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  bottom:9px!important;
+  width:18px!important;
+  height:2px!important;
+  border-radius:999px!important;
+  background:rgba(191,206,238,.5)!important;
+  transform:translateX(-50%)!important;
+}
+
+/* Custom range: reserve a real column for the profile avatar. */
+@media (min-width:1181px){
+  .headerActions:has(.customRangeGroup:not([hidden])){
+    grid-template-columns:
+      minmax(132px,1fr)
+      minmax(130px,.9fr)
+      minmax(140px,1.1fr)
+      minmax(140px,1.1fr)
+      minmax(120px,.85fr)
+      minmax(190px,1.25fr)
+      72px!important;
+    grid-template-rows:auto auto!important;
+    column-gap:12px!important;
+    row-gap:12px!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .playerButton{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .levelButton{
+    grid-column:2!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .controlGroup:has(#mode){
+    grid-column:3 / 5!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .controlGroup:has(#gameType){
+    grid-column:5 / 7!important;
+    grid-row:1!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .customRangeGroup{
+    grid-column:1 / 4!important;
+    grid-row:2!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .soundControl{
+    grid-column:4 / 6!important;
+    grid-row:2!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .headerButtons{
+    grid-column:6!important;
+    grid-row:2!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+    min-width:0!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .headerButtons button{
+    min-width:0!important;
+    width:100%!important;
+    padding-left:12px!important;
+    padding-right:12px!important;
+  }
+
+  .headerActions:has(.customRangeGroup:not([hidden])) .profileAvatarButton{
+    position:static!important;
+    grid-column:7!important;
+    grid-row:2!important;
+    align-self:center!important;
+    justify-self:center!important;
+    margin:0!important;
+    transform:none!important;
+    z-index:1!important;
+  }
+}
+
+/* Achievement detail navigation. */
+.achievementModal{
+  width:min(860px,calc(100vw - 30px))!important;
+}
+
+.achievementViewer{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:58px minmax(0,1fr) 58px!important;
+  align-items:center!important;
+  gap:16px!important;
+}
+
+.achievementViewerContent{
+  min-width:0!important;
+  text-align:center!important;
+}
+
+.achievementNavButton{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:52px!important;
+  height:76px!important;
+  padding:0!important;
+  border:1px solid rgba(244,197,105,.24)!important;
+  border-radius:18px!important;
+  background:rgba(255,255,255,.04)!important;
+  color:var(--text)!important;
+  font-size:2.5rem!important;
+  font-weight:700!important;
+  line-height:1!important;
+  cursor:pointer!important;
+  transition:
+    transform .16s ease,
+    border-color .16s ease,
+    background .16s ease!important;
+}
+
+.achievementNavButton:hover{
+  transform:translateY(-1px)!important;
+  border-color:rgba(244,197,105,.55)!important;
+  background:rgba(244,197,105,.08)!important;
+}
+
+.achievementNavButton:active{
+  transform:translateY(0) scale(.97)!important;
+}
+
+.achievementPosition{
+  margin-top:14px!important;
+  color:var(--muted)!important;
+  font-size:.82rem!important;
+  font-weight:800!important;
+  letter-spacing:.14em!important;
+  text-align:center!important;
+  text-transform:uppercase!important;
+}
+
+@media (max-width:700px){
+  .achievementViewer{
+    grid-template-columns:42px minmax(0,1fr) 42px!important;
+    gap:7px!important;
+  }
+
+  .achievementNavButton{
+    width:40px!important;
+    height:62px!important;
+    border-radius:14px!important;
+    font-size:2rem!important;
+  }
+
+  .achievementLargeImage{
+    width:min(300px,68vw)!important;
+  }
+}

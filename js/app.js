@@ -32,13 +32,16 @@ const e = {
   achievementFilters:$("achievementFilters"),achievementGrid:$("achievementGrid"),recentRuns:$("recentRuns"),
   exportData:$("exportDataBtn"),importData:$("importDataInput"),deleteData:$("deleteDataBtn"),
   achievementOverlay:$("achievementOverlay"),closeAchievement:$("closeAchievementBtn"),
-  achievementTitle:$("achievementTitle"),achievementImage:$("achievementImage"),
-  achievementRarity:$("achievementRarity"),achievementDescription:$("achievementDescription"),
-  achievementStatus:$("achievementStatus"),achievementUnlockInfo:$("achievementUnlockInfo")
+  previousAchievement:$("previousAchievementBtn"),nextAchievement:$("nextAchievementBtn"),
+  achievementPosition:$("achievementPosition"),achievementTitle:$("achievementTitle"),
+  achievementImage:$("achievementImage"),achievementRarity:$("achievementRarity"),
+  achievementDescription:$("achievementDescription"),achievementStatus:$("achievementStatus"),
+  achievementUnlockInfo:$("achievementUnlockInfo")
 };
 
 let profile={username:localStorage.getItem("pi-player-name")||""};
 let achievementFilter="All";
+let activeAchievementIndex=-1;
 if(!localStorage.getItem("pi-profile-created-at"))localStorage.setItem("pi-profile-created-at",new Date().toISOString());
 
 
@@ -135,13 +138,30 @@ function modeLabel(run){
   return `${run?.total||0} digits`;
 }
 function openAchievement(a){
+  if(!a)return;
+  activeAchievementIndex=ACHIEVEMENTS.findIndex(item=>item.id===a.id);
   const u=unlocked()[a.id];
   e.achievementTitle.textContent=a.secret&&!u?"Secret achievement":a.name;
-  e.achievementImage.src=a.img;e.achievementImage.alt=a.name;
-  e.achievementRarity.textContent=a.rarity;e.achievementDescription.textContent=a.secret&&!u?"This achievement remains hidden until you unlock it.":a.desc;
+  e.achievementImage.src=a.img;
+  e.achievementImage.alt=a.name;
+  e.achievementRarity.textContent=a.rarity;
+  e.achievementDescription.textContent=a.secret&&!u
+    ?"This achievement remains hidden until you unlock it."
+    :a.desc;
   e.achievementStatus.textContent=u?"Unlocked":"Locked";
-  e.achievementUnlockInfo.textContent=u?`Unlocked ${formatUnlockDate(u.unlockedAt)}`:"Keep playing to unlock it.";
+  e.achievementUnlockInfo.textContent=u
+    ?`Unlocked ${formatUnlockDate(u.unlockedAt)}`
+    :"Keep playing to unlock it.";
+  if(e.achievementPosition){
+    e.achievementPosition.textContent=`${activeAchievementIndex+1} of ${ACHIEVEMENTS.length}`;
+  }
   e.achievementOverlay.classList.add("show");
+}
+function navigateAchievement(direction){
+  if(!e.achievementOverlay.classList.contains("show")||!ACHIEVEMENTS.length)return;
+  const start=activeAchievementIndex>=0?activeAchievementIndex:0;
+  const next=(start+direction+ACHIEVEMENTS.length)%ACHIEVEMENTS.length;
+  openAchievement(ACHIEVEMENTS[next]);
 }
 function renderAchievements(){
   const u=unlocked(),cats=["All",...new Set(ACHIEVEMENTS.map(a=>a.cat))];
@@ -239,9 +259,9 @@ e.closeProfile.onclick=closeName;e.saveProfile.onclick=saveName;e.username.onkey
 document.querySelectorAll(".boardTab").forEach(b=>b.onclick=async()=>{leaderboard.type=b.dataset.board;await leaderboard.load()});
 let timer;e.search.oninput=()=>{clearTimeout(timer);timer=setTimeout(()=>leaderboard.load(),300)};e.refresh.onclick=()=>leaderboard.load();
 [e.closeResult,e.closeResult2].forEach(b=>b.onclick=()=>e.resultOverlay.classList.remove("show"));e.playAgain.onclick=()=>{e.resultOverlay.classList.remove("show");game.start()};
-e.closeFullProfile.onclick=()=>e.fullProfileOverlay.classList.remove("show");e.closeAchievement.onclick=()=>e.achievementOverlay.classList.remove("show");
+e.closeFullProfile.onclick=()=>e.fullProfileOverlay.classList.remove("show");e.closeAchievement.onclick=()=>e.achievementOverlay.classList.remove("show");e.previousAchievement.onclick=()=>navigateAchievement(-1);e.nextAchievement.onclick=()=>navigateAchievement(1);
 e.exportData.onclick=()=>{const blob=new Blob([JSON.stringify(exportAllData(),null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`pi-digit-profile-${Date.now()}.json`;a.click();URL.revokeObjectURL(a.href)};
 e.importData.onchange=async x=>{try{importAllData(JSON.parse(await x.target.files[0].text()));location.reload()}catch{showToast(e.toast,"The data file could not be imported.",true)}};
 e.deleteData.onclick=()=>{if(confirm("This permanently deletes your profile, runs, records, and achievements. Continue?")){clearAllGameData();location.reload()}};
-window.addEventListener("keydown",x=>{if(x.key==="Escape"){e.resultOverlay.classList.remove("show");e.fullProfileOverlay.classList.remove("show");e.achievementOverlay.classList.remove("show");closeName()}});
+window.addEventListener("keydown",x=>{if(e.achievementOverlay.classList.contains("show")){if(x.key==="ArrowLeft"){x.preventDefault();navigateAchievement(-1);return}if(x.key==="ArrowRight"){x.preventDefault();navigateAchievement(1);return}}if(x.key==="Escape"){e.resultOverlay.classList.remove("show");e.fullProfileOverlay.classList.remove("show");e.achievementOverlay.classList.remove("show");closeName()}});
 updateProfileUI();renderLevelUI();leaderboard.load();loadMiniStats();if(!profile.username){e.username.value="Magnus";openName(true)}
