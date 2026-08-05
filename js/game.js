@@ -162,6 +162,12 @@ export class PiGame {
 
   showTrainingBlock(manual = true) {
     if (!this.state.running || this.state.gameType !== "training") return;
+
+    // Pause timing while the training overlay blocks all player input.
+    // Only resume afterward if the timer had already started.
+    const resumeTimerAfterReveal = Boolean(this.state.timer);
+    if (resumeTimerAfterReveal) this.stopTimer(true);
+
     const globalIndex = this.state.startIndex + this.state.index;
     const blockStart = Math.floor(globalIndex / 10) * 10;
     this.state.trainingBlocks.add(blockStart);
@@ -184,6 +190,9 @@ export class PiGame {
       this.elements.input.disabled = false;
       this.elements.input.value = "";
       this.elements.hint.textContent = "Continue from the same digit.";
+
+      if (this.state.running && resumeTimerAfterReveal) this.startTimer();
+
       this.elements.input.focus();
     }, 3000);
     this.update();
