@@ -1,4 +1,4 @@
-import { PI_DIGITS, getMedalStandards, MAX_DIGITS } from "./config.js";
+import { PI_DIGITS, getMedalForPerformance, MAX_DIGITS } from "./config.js";
 import { formatTime } from "./utils.js";
 import { getBestTime, saveBestTime } from "./storage.js";
 
@@ -217,8 +217,7 @@ export class PiGame {
       ? this.state.total / elapsedSeconds
       : 0;
     const medal = this.state.gameType === "competition" && completed
-      ? (getMedalStandards(this.state.total)
-          .find(standard => digitsPerSecond >= standard.digitsPerSecond)?.name || "None")
+      ? getMedalForPerformance(this.state.total, this.state.elapsed)
       : null;
 
     const run = {

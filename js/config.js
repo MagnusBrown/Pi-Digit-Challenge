@@ -10,10 +10,18 @@ export const MEDALS = [
 ];
 
 export const MEDAL_SPEEDS_BY_MODE = Object.freeze({
-  20:   Object.freeze({ Platinum: 3.00, Diamond: 2.60, Gold: 2.20, Silver: 1.60, Bronze: 1.00 }),
-  50:   Object.freeze({ Platinum: 2.60, Diamond: 2.25, Gold: 1.90, Silver: 1.40, Bronze: 0.90 }),
+  // Short modes are sprint disciplines. Platinum requires an exceptional,
+  // nearly automatic run with very high typing speed.
+  20:   Object.freeze({ Platinum: 4.40, Diamond: 3.60, Gold: 2.80, Silver: 2.00, Bronze: 1.20 }),
+  50:   Object.freeze({ Platinum: 3.00, Diamond: 2.60, Gold: 2.20, Silver: 1.60, Bronze: 1.00 }),
+
+  // 100 digits was calibrated from repeated test runs and is intentionally
+  // left demanding at the top end.
   100:  Object.freeze({ Platinum: 2.20, Diamond: 1.90, Gold: 1.60, Silver: 1.20, Bronze: 0.80 }),
-  200:  Object.freeze({ Platinum: 1.95, Diamond: 1.70, Gold: 1.45, Silver: 1.08, Bronze: 0.72 }),
+
+  // Longer modes place more weight on memory endurance. Lower medals are
+  // more accessible, while Platinum remains deliberately rare.
+  200:  Object.freeze({ Platinum: 1.95, Diamond: 1.60, Gold: 1.30, Silver: 0.95, Bronze: 0.65 }),
   400:  Object.freeze({ Platinum: 1.70, Diamond: 1.50, Gold: 1.28, Silver: 0.96, Bronze: 0.64 }),
   750:  Object.freeze({ Platinum: 1.50, Diamond: 1.32, Gold: 1.13, Silver: 0.85, Bronze: 0.57 }),
   1000: Object.freeze({ Platinum: 1.40, Diamond: 1.22, Gold: 1.05, Silver: 0.78, Bronze: 0.52 })
@@ -35,4 +43,19 @@ export function getMedalStandards(totalDigits) {
     secondsPerDigit: 1 / speeds[medal.name],
     targetTimeMs: requested / speeds[medal.name] * 1000
   }));
+}
+
+export function getMedalForPerformance(totalDigits, elapsedMs) {
+  const total = Number(totalDigits);
+  const elapsed = Number(elapsedMs);
+
+  if (!Number.isFinite(total) || total <= 0 ||
+      !Number.isFinite(elapsed) || elapsed <= 0) {
+    return "None";
+  }
+
+  const digitsPerSecond = total / (elapsed / 1000);
+
+  return getMedalStandards(total)
+    .find((standard) => digitsPerSecond >= standard.digitsPerSecond)?.name || "None";
 }

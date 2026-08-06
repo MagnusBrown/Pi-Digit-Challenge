@@ -1,5 +1,6 @@
 import { cleanUsername, escapeHtml, formatTime } from "./utils.js";
 import { getLocalRuns } from "./storage.js";
+import { getMedalForPerformance } from "./config.js";
 
 function modeLabel(run){return run?.custom&&run.startDigit&&run.endDigit?`digits ${run.startDigit}–${run.endDigit}`:`${run.total} digits`}
 
@@ -177,10 +178,17 @@ export class Leaderboard {
   }
 
   medalLabel(run) {
-    const pace = run.time / 1000 / run.total;
-    if (pace <= 0.9) return "Gold";
-    if (pace <= 1.5) return "Silver";
-    if (pace <= 2.3) return "Bronze";
-    return "None";
+    const normalized = medalLabel(run?.medal);
+    const validMedals = new Set(["Platinum", "Diamond", "Gold", "Silver", "Bronze"]);
+
+    // Prefer the medal stored with newer runs so the leaderboard and run
+    // details always agree.
+    if (validMedals.has(normalized)) {
+      return normalized;
+    }
+
+    // Recalculate legacy runs through the same centralized calibration used
+    // when a run is completed. No leaderboard-specific thresholds remain.
+    return getMedalForPerformance(run?.total, run?.time);
   }
 }
